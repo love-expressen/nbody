@@ -1,8 +1,9 @@
-class Bound {
-  constructor(state = {}) {
-    this.x = state.x || {min: 0, max: 100};
-    this.y = state.y || {min: 0, max: 100};
-    this.bounceFactor = state.bounceFactor || .9;
+module.exports = class Bound {
+  constructor(xMin, xMax, yMin, yMax) {
+    this.type = "Bound";
+    this.x = {min: xMin, max: xMax};
+    this.y = {min: yMin, max: yMax};
+    this.bounceFactor = .9;
   }
 
   get width() {

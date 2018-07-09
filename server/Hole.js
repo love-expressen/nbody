@@ -1,11 +1,12 @@
-class Hole {
+module.exports = class Hole {
   static get radius() {
     return 20
   };
 
-  constructor(state = {}) {
-    this.x = state.x || 0;
-    this.y = state.y || 0;
+  constructor(xPos, yPos) {
+    this.type = "Hole";
+    this.x = xPos;
+    this.y = yPos;
   }
 
   clear(ctx) {

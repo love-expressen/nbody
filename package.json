@@ -1,0 +1,32 @@
+{
+  "name": "nbody",
+  "version": "1.0.0",
+  "description": "Silly fun stuff",
+  "main": "server/app.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "simple-peer": "^9.1.2",
+    "uuid": "^3.3.2",
+    "wrtc": "^0.1.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/love-expressen/nbody.git"
+  },
+  "keywords": [
+    "gravity",
+    "game",
+    "2D"
+  ],
+  "author": "Love Mayrhofer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/love-expressen/nbody/issues"
+  },
+  "homepage": "https://github.com/love-expressen/nbody#readme"
+}

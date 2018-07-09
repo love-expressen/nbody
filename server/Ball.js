@@ -1,8 +1,17 @@
-class Ball {
-  constructor(state = {}) {
-    this.position = state.position || {x:0, y:0};
-    this.velocity = state.velocity || {x: 0, y: 0};
-    this.radius = state.radius || 10;
+module.exports = class Ball {
+  constructor(xPos, yPos, radius) {
+    this.type = "Ball";
+    this.position = {
+      x: xPos,
+      y: yPos
+    };
+
+    this.velocity = {
+      x: 0,
+      y: 0
+    };
+
+    this.radius = radius;
   }
 
   clear(ctx) {
