@@ -1,4 +1,5 @@
-class Network {
+import SimplePeer from "simple-peer";
+export default class Network {
 
   constructor() {
     this.p = new SimplePeer({
@@ -7,9 +8,8 @@ class Network {
     });
 
     this.p.on('signal', (data) => {
-      //console.log("SIGNAL", data);
       if (data.type === "answer") {
-        fetch(`/answer/${this.roomId}/${this.peerId}`, {
+        fetch(`/answer/${this.roomId}/${this.playerId}`, {
           method: "POST",
           body: JSON.stringify(data),
           headers: {
@@ -20,7 +20,7 @@ class Network {
     });
 
     this.p.on('connect', () => {
-      console.log('NETWORK CONNECTED');
+      console.log("Connected");
       this.cancelReloginTimer();
     });
 
@@ -35,11 +35,11 @@ class Network {
     });
   }
 
-  send(data){
+  send(data) {
     this.p.send(JSON.stringify(data));
   }
 
-  getPeer(){
+  getPeer() {
     return this.peer;
   }
 
@@ -60,14 +60,11 @@ class Network {
     return fetch("/room/" + room)
     .then((response) => response.json())
     .then((json) => {
-      //console.log("ROOM CALLBACK", json);
       this.roomId = json.roomId;
-      this.peerId = json.peerId;
+      this.playerId = json.playerId;
       this.reloginIfFails(room);
       //After this calls we should have a connection to the server
-      this.p.signal(
-        json.data
-      );
+      this.p.signal(json.data);
     });
   }
 };

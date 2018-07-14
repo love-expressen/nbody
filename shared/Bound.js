@@ -1,9 +1,13 @@
-module.exports = class Bound {
-  constructor(xMin, xMax, yMin, yMax) {
+import uuid from "uuid";
+
+export default class Bound {
+  constructor(xMin, xMax, yMin, yMax, style = "BOX") {
+    this.id = uuid.v4();
     this.type = "Bound";
     this.x = {min: xMin, max: xMax};
     this.y = {min: yMin, max: yMax};
     this.bounceFactor = .9;
+    this.style = style;
   }
 
   get width() {
@@ -12,23 +16,6 @@ module.exports = class Bound {
 
   get height() {
     return this.y.max - this.y.min;
-  }
-
-  clear(ctx) {
-    return;
-    ctx.clearRect(
-      this.x.min,
-      this.y.min,
-      this.width,
-      this.height
-    )
-  }
-
-  draw(ctx) {
-    ctx.strokeStyle = "rgba(0, 0, 0, 1)";
-    ctx.lineWidth = 4;
-    ctx.strokeRect(this.x.min, this.y.min, this.width, this.height);
-    ctx.restore();
   }
 
   isInside2d(pos, radius) {

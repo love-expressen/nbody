@@ -1,48 +1,40 @@
-class Hole {
-  static get radius() {
-    return 20
-  };
+import Hole from "../shared/Hole";
 
-  constructor(state = {}) {
+export default class ClientHole extends Hole {
+
+  constructor(state = {}, scale = 1) {
+    super(state.x, state.y);
+    this.scalingFactor = scale;
+    this.setState(state);
+    this.radius = 20 * scale;
+  }
+
+  setState(state) {
+    this.id = state.id;
     this.x = state.x || 0;
     this.y = state.y || 0;
   }
 
   clear(ctx) {
     ctx.clearRect(
-      this.x - Hole.radius,
-      this.y - Hole.radius,
-      Hole.radius * 2,
-      Hole.radius * 2
+      (this.x - this.radius) * this.scalingFactor,
+      (this.y - this.radius) * this.scalingFactor,
+      (this.radius * 2) * this.scalingFactor,
+      (this.radius * 2) * this.scalingFactor
     )
   }
 
   draw(ctx) {
-    ctx.fillStyle = "rgba(0,0,0,.4)";
+    ctx.fillStyle = "rgba(255,255,0,.9)";
     ctx.beginPath();
-    ctx.arc(this.x, this.y, Hole.radius, 0, Math.PI * 2);
+    ctx.arc(
+      this.x * this.scalingFactor,
+      this.y * this.scalingFactor,
+      this.radius * this.scalingFactor,
+      0,
+      Math.PI * 2
+    );
     ctx.fill();
     ctx.restore();
-  }
-
-  interact(ball, dt) {
-    const distVec = {
-      x: this.x - ball.position.x,
-      y: this.y - ball.position.y
-    };
-    const distToHole = Math.sqrt(
-      Math.pow(distVec.x, 2) +
-      Math.pow(distVec.y, 2)
-    );
-
-    const normalizedDist = {
-      x: distVec.x / distToHole,
-      y: distVec.y / distToHole
-    };
-
-    const force = Math.min(1000, 100000 / Math.pow(distToHole, 1));
-
-    ball.velocity.x += force * dt * normalizedDist.x;
-    ball.velocity.y += force * dt * normalizedDist.y;
   }
 };

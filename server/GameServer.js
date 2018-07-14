@@ -1,51 +1,78 @@
 "use strict";
-
-const Hole = require("./Hole");
-const Ball = require("./Ball");
-const Bound = require("./Bound");
+const Hole = require("./../shared/Hole").default;
+const Ball = require("./../shared/Ball").default;
+const Bound = require("./../shared/Bound").default;
+const Breakable = require("./../shared/Breakable").default;
+const GameEngine = require("./../shared/GameEngine").default;
+const MAX_AGE = 5000;
+const DT = 1 / 60;
 
 module.exports = class GameServer {
-  constructor() {
-    this.worldObjects = [
-      new Hole(250, 150),
-      new Bound(0, 600, 0, 600),
-      new Bound(140, 190, 80, 180),
-      new Bound(240, 300, 80, 180),
-      new Bound(240, 300, 80, 180),
-    ];
-
-    this.balls = [
-      new Ball(40, 40, 9),
-      new Ball(340, 540, 20),
-    ];
-    const s = 0;
-    this.balls[0].velocity.x = 100 * s;
-    this.balls[0].velocity.y = 40 * s;
-
-    this.W = 600;
-    this.H = 600;
+  constructor(onStateChange, onGameEnd) {
+    this.age = 0;
+    this.dt = DT;
+    this.status = "INITIALIZING";
+    this.gameEngine = new GameEngine();
+    this.onStateChange = onStateChange;
+    this.onGameEnd = onGameEnd;
   }
 
-  moveHole(data){
-    const hole = this.worldObjects.find(wo=>wo.type==="Hole");
-    hole.x = data.x;
-    hole.y = data.y;
-  }
-
-  step(timeStep, firstDraw) {
-    this.balls.forEach(ball => {
-      this.worldObjects.forEach(wo => wo.interact(ball, timeStep));
-      ball.interact(timeStep);
+  initializeMap() {
+    this.gameEngine.setState({
+      statics: [
+        new Bound(0, 1000, 0, 1000, "stars.jpeg"),
+        new Bound(140, 190, 80, 180),
+         new Bound(240, 300, 80, 180),
+        new Hole(250, 150),
+      ],
+      dynamics: [
+        new Breakable(500, 500, 40, 101)
+      ],
+      balls: [
+        //new Ball(40, 40, 9),
+        new Ball(340, 340, 20),
+      ],
+      W: 1000,
+      H: 1000
     });
   }
 
-  getState() {
-    return {
-      worldObjects: this.worldObjects,
-      balls: this.balls,
-      W: this.W,
-      H: this.H
-    }
+  moveHole(playerId, data) {
+    this.gameEngine.moveHole(playerId, data.x, data.y);
   }
+
+  start() {
+    if (this.interval) return;
+    this.status = "RUNNING";
+    this.initializeMap();
+    this.interval = setInterval(() => {
+      this.step(this.dt, false);
+      try {
+        this.onStateChange(this.gameEngine.state);
+        if (this.age++ > MAX_AGE) {
+          clearInterval(this.interval);
+          this.status = "ENDED";
+          this.onGameEnd();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }, this.dt * 1000);
+  }
+
+  step(timeStep) {
+    if (Math.random() < 0.01) {
+      const radius = Math.random() * 20 + 10;
+      this.gameEngine.addBreakable(
+        this.gameEngine.W * Math.random(),
+        this.gameEngine.H * Math.random(),
+        radius,
+        Math.round(100 / radius)
+      );
+    }
+    this.gameEngine.step(timeStep);
+    this.onStateChange(this.gameEngine.state);
+  }
+
 };
 

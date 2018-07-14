@@ -1,29 +1,15 @@
-module.exports = class Hole {
+import uuid from "uuid";
+
+export default class Hole {
   static get radius() {
     return 20
   };
 
   constructor(xPos, yPos) {
+    this.id = uuid.v4();
     this.type = "Hole";
     this.x = xPos;
     this.y = yPos;
-  }
-
-  clear(ctx) {
-    ctx.clearRect(
-      this.x - Hole.radius,
-      this.y - Hole.radius,
-      Hole.radius * 2,
-      Hole.radius * 2
-    )
-  }
-
-  draw(ctx) {
-    ctx.fillStyle = "rgba(0,0,0,.4)";
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, Hole.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
   }
 
   interact(ball, dt) {
@@ -40,9 +26,7 @@ module.exports = class Hole {
       x: distVec.x / distToHole,
       y: distVec.y / distToHole
     };
-
     const force = Math.min(1000, 100000 / Math.pow(distToHole, 1));
-
     ball.velocity.x += force * dt * normalizedDist.x;
     ball.velocity.y += force * dt * normalizedDist.y;
   }
